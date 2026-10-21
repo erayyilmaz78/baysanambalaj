@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Baysan Plastik Ambalaj iletişim bilgileri. Toptan poşet ve ambalaj siparişleriniz ve fabrikamızın adres bilgileri.">
+    <title>İletişim ve Fiyat Teklifi | Baysan Ambalaj</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- INDEX İLE AYNI HEADER --- */
+        header {
+            padding: 20px 0;
+            background: transparent;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 40px rgba(8, 18, 37, 0.08);
+            padding: 10px 0;
+        }
+
+        .nav-links {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 6px 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-links li a {
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--metin-rengi);
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-links li a:hover {
+            color: var(--canli-mavi);
+            background: rgba(29, 78, 216, 0.06);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.1);
+        }
+
+        .logo {
+            width: 300px !important;
+            height: auto !important;
+            position: absolute;
+            top: 50% !important;
+            left: 20px !important;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.08));
+            z-index: 1001;
+        }
+
+        .logo img {
+            width: 100%;
+            height: auto;
+            max-height: none;
+            object-fit: contain;
+        }
+
+        header,
+        header.scrolled {
+            min-height: 128px;
+            padding: 14px 0 !important;
+        }
+
+        header nav {
+            max-width: 1400px !important;
+            min-height: 128px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+            padding: 0 24px 0 360px !important;
+        }
+
+        header.scrolled .logo {
+            width: 300px !important;
+            height: auto !important;
+            top: 50% !important;
+            left: 20px !important;
+            transform: translateY(-50%);
+            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.06));
+        }
+
+        .contact-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .contact-info,
+        .contact-form {
+            flex: 1;
+            min-width: 350px;
+            background-color: var(--beyaz);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--glass-golge);
+            border: 1px solid var(--glass-border);
+        }
+
+        .info-item {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .info-item strong {
+            color: var(--canli-mavi);
+            min-width: 80px;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 300px;
+            border-radius: 16px;
+            border: none;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--canli-mavi);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background-color: #fff;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--koyu-mavi);
+            font-size: 0.95rem;
+        }
+
+        /* WhatsApp Odaklı Gönder Butonu */
+        .btn-wa-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            padding: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            margin-top: 10px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-wa-submit:hover {
+            background-color: #128C7E;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="main-header" class="scrolled">
+        <nav style="max-width: 1400px;">
+            <div class="logo">
+                <a href="index.html"><img src="logo.svg" alt="Baysan Plastik Ambalaj Logosu"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Anasayfa</a></li>
+                <li><a href="iletisim.html">Hakkımızda</a></li>
+                <li><a href="index.html#hizmetlerimiz">Ürünlerimiz</a></li>
+                <li><a href="iletisim.html" style="color: var(--vurgu-turuncu);">İletişim</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main style="max-width: 1100px; margin: 180px auto 60px auto; padding: 0 20px;">
+
+        <h1
+            style="color: var(--koyu-mavi); text-align: center; font-size: 2.8rem; letter-spacing: -1px; margin-bottom: 10px; font-weight: 800;">
+            Bizimle İletişime Geçin</h1>
+        <p style="text-align: center; color: #666; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Tüm ambalaj
+            ihtiyaçlarınız için formumuzu doldurarak doğrudan
+            WhatsApp üzerinden anında teklif alabilirsiniz.</p>
+
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3 style="color: var(--koyu-mavi); margin-bottom: 25px; font-size: 1.6rem;">Fabrika & Ofis</h3>
+
+                <div class="info-item">
+                    <strong>Adres:</strong>
+                    <span style="line-height: 1.5; color: var(--metin-rengi);">İkitelli OSB. Süleyman Demirel
+                        Blv.<br>Sinpaş İş Modern San. Sitesi C 16<br>Başakşehir / İSTANBUL</span>
+                </div>
+                <div class="info-item">
+                    <strong>WhatsApp:</strong>
+                    <a href="https://wa.me/905326107065" target="_blank" rel="noopener noreferrer"
+                        style="color: #25d366; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 5px; font-size: 1.1rem;">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12.031 6.172c-2.277 0-4.125 1.848-4.125 4.125 0 .762.207 1.474.566 2.087l-.601 2.193 2.245-.589c.589.324 1.258.513 1.964.513 2.277 0 4.125-1.848 4.125-4.125s-1.848-4.125-4.174-4.125zm3.176 5.862c-.131.369-.643.682-1.043.766-.271.057-.624.102-1.002-.022-.243-.081-.546-.188-.912-.349-1.545-.682-2.541-2.243-2.617-2.345-.076-.102-.622-.828-.622-1.581s.391-1.127.531-1.282c.14-.155.306-.193.408-.193.102 0 .204.004.294.01.092.006.216-.035.338.261.124.297.423 1.034.461 1.111.038.077.063.167.013.269-.05.103-.076.167-.152.257-.076.09-.16.201-.229.27-.076.077-.156.16-.067.315.089.155.395.653.848 1.056.583.519 1.074.68 1.239.757.167.076.264.063.363-.051.099-.115.423-.493.536-.662.113-.169.227-.141.383-.083.157.058.989.467 1.159.551.171.083.284.123.326.193.041.07.041.405-.089.774zM12 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1zm0 2c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z" />
+                        </svg>
+                        0532 610 70 65
+                    </a>
+                </div>
+                <div class="info-item">
+                    <strong>E-Posta:</strong>
+                    <a href="mailto:info@baysanambalaj.com"
+                        style="color: var(--metin-rengi); text-decoration: none; transition: color 0.3s;">info@baysanambalaj.com</a>
+                </div>
+
+                <iframe class="map-frame"
+                    src="https://maps.google.com/maps?q=%C4%B0kitelli+OSB.+S%C3%BCleyman+Demirel+Blv.+Sinpa%C5%9F+%C4%B0%C5%9F+Modern+San.+Sitesi+C+16+Ba%C5%9Fak%C5%9Fehir+%2F+%C4%B0STANBUL&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+
+            <div class="contact-form">
+                <h3 style="color: var(--koyu-mavi); margin-bottom: 10px; font-size: 1.6rem;">Anında Teklif Alın</h3>
+                <p style="font-size: 0.95rem; color: #777; margin-bottom: 25px;">Aşağıdaki detayları doldurun,
+                    sistemimiz
+                    mesajınızı hazırlayıp sizi doğrudan uzman ekibimizin WhatsApp hattına yönlendirsin.</p>
+
+                <form id="quoteForm">
+                    <label for="q-name">Ad Soyad / Firma Adı</label>
+                    <input type="text" id="q-name" required placeholder="Örn: Eray / Baysan Plastik">
+
+                    <label for="q-product">İlgilendiğiniz Ürün</label>
+                    <select id="q-product" required>
+                        <option value="">Yükleniyor...</option>
+                    </select>
+
+                    <label for="q-msg">Mesajınız (Ebat, Kalınlık, Kaç Adet Lazım?)</label>
+                    <textarea id="q-msg" rows="5" required
+                        placeholder="Örn: 20.000 adet kırmızı saplı, 30x40 ölçülerinde çanta poşet için fiyat alabilir miyim?"></textarea>
+
+                    <button type="submit" class="btn-wa-submit">
+                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                            <path
+                                d="M12.031 6.172c-2.277 0-4.125 1.848-4.125 4.125 0 .762.207 1.474.566 2.087l-.601 2.193 2.245-.589c.589.324 1.258.513 1.964.513 2.277 0 4.125-1.848 4.125-4.125s-1.848-4.125-4.174-4.125zm3.176 5.862c-.131.369-.643.682-1.043.766-.271.057-.624.102-1.002-.022-.243-.081-.546-.188-.912-.349-1.545-.682-2.541-2.243-2.617-2.345-.076-.102-.622-.828-.622-1.581s.391-1.127.531-1.282c.14-.155.306-.193.408-.193.102 0 .204.004.294.01.092.006.216-.035.338.261.124.297.423 1.034.461 1.111.038.077.063.167.013.269-.05.103-.076.167-.152.257-.076.09-.16.201-.229.27-.076.077-.156.16-.067.315.089.155.395.653.848 1.056.583.519 1.074.68 1.239.757.167.076.264.063.363-.051.099-.115.423-.493.536-.662.113-.169.227-.141.383-.083.157.058.989.467 1.159.551.171.083.284.123.326.193.041.07.041.405-.089.774zM12 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1zm0 2c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z" />
+                        </svg>
+                        WhatsApp ile Gönder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Baysan Plastik Ambalaj. Tüm hakları saklıdır.</p>
+        <p>www.baysanambalaj.com.tr</p>
+    </footer>
+
+    <a href="https://wa.me/905326107065" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 32 32" width="35" height="35">
+            <path fill="#FFF"
+                d="M16 2a13 13 0 0 0-11 20l-2 7 7-2a13 13 0 1 0 6-25zm0 2a11 11 0 1 1-5.7 20.4l-4 1.2 1.2-4A11 11 0 0 1 16 4zm5.5 14.5c-.3-.1-1.8-.9-2-.9-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-1-1-1.3-1.3-1.4-1.6-.1-.3 0-.4.2-.6l.4-.5c.2-.2.2-.4.3-.6.1-.3 0-.5-.1-.7-.2-.3-.8-2-1.1-2.8-.3-.8-.5-.7-.7-.7h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.1 1.3 3.3c.2.2 2.3 3.5 5.5 4.9 2.2.9 3 1 3.8.9.9-.1 1.8-.7 2-1.5.2-.8.2-1.5.1-1.6-.1-.2-.3-.3-.6-.4z" />
+        </svg>
+    </a>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        // SİZİN CONFİG AYARLARINIZ
+        const firebaseConfig = {
+            apiKey: "AIzaSyDa5PvNq8cIMPCxzjB_srweVgeMWottOE0",
+            authDomain: "baysanambalaj-9b434.firebaseapp.com",
+            projectId: "baysanambalaj-9b434",
+            storageBucket: "baysanambalaj-9b434.firebasestorage.app",
+            messagingSenderId: "974514964386",
+            appId: "1:974514964386:web:13a778c6476d2c75c794fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 1. Ürünleri Veritabanından Çekip Formdaki Select Kutusuna Ekle
+        async function populateProducts() {
+            const select = document.getElementById('q-product');
+            try {
+                const snapshot = await db.collection("urunler").get();
+                let options = '<option value="" disabled selected>Ürün Seçin</option>';
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    if (p.isim) {
+                        options += `<option value="${p.isim}">${p.isim}</option>`;
+                    }
+                });
+                options += '<option value="Özel Üretim / Diğer">Özel Üretim / Diğer</option>';
+                select.innerHTML = options;
+            } catch (err) {
+                console.error("Ürünler yüklenemedi:", err);
+                select.innerHTML = '<option value="Genel Teklif">Genel Teklif İsteği</option>';
+            }
+        }
+
+        populateProducts();
+
+        // 2. Form Gönderildiğinde Dinamik WhatsApp Mesajı Oluştur (Asıl Büyü Burada!)
+        document.getElementById('quoteForm').onsubmit = (e) => {
+            e.preventDefault();
+
+            // Formdan verileri al
+            const name = document.getElementById('q-name').value;
+            const product = document.getElementById('q-product').value;
+            const msg = document.getElementById('q-msg').value;
+
+            // WhatsApp'a gidecek mesaj şablonunu oluştur
+            const waMessage = `Merhaba, ben ${name}.\n\n*${product}* ürünü için fiyat teklifi ve bilgi almak istiyorum.\n\n*Detaylar:*\n${msg}`;
+
+            // Mesajı internet adresine uygun formata çevir
+            const encodedMessage = encodeURIComponent(waMessage);
+
+            // Hedef WhatsApp Numarası
+            const waNumber = "905326107065";
+
+            // WhatsApp Linkini Oluştur ve Yeni Sekmede Aç
+            const waURL = `https://wa.me/${waNumber}?text=${encodedMessage}`;
+            window.open(waURL, '_blank');
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baysan Admin | Profesyonel Yönetim Paneli</title>
+    <style>
+        :root {
+            --koyu-mavi: #081225;
+            --canli-mavi: #1D4ED8;
+            --acik-gri: #F8FAFC;
+            --beyaz: #ffffff;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--acik-gri);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            color: #334155;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .admin-box,
+        .login-box {
+            background: var(--beyaz);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            padding: 12px 25px;
+        }
+
+        .btn-primary {
+            background: var(--canli-mavi);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+
+        .btn-cancel {
+            background: #94a3b8;
+            color: white;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #f8fafc;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 13px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 120px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .del-ov {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="login-section" class="login-box" style="max-width: 400px; margin: 100px auto;">
+            <h2 style="text-align: center;">Yönetici Girişi</h2>
+            <input type="email" id="email" placeholder="E-posta Adresi">
+            <input type="password" id="password" placeholder="Şifre">
+            <button onclick="login()" class="btn-primary">Giriş Yap</button>
+        </div>
+
+        <div id="admin-section" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Baysan Ürün & Galeri Yönetimi</h2>
+                <button onclick="logout()" style="background:none; color:var(--danger); padding:0;">Çıkış Yap</button>
+            </div>
+
+            <div class="admin-box">
+                <h3 id="form-title">Yeni Ürün Ekle</h3>
+                <input type="hidden" id="edit-id">
+                <input type="hidden" id="old-path">
+                <input type="text" id="p-name" placeholder="Ürün Adı">
+                <textarea id="p-desc" rows="3" placeholder="Ürün Açıklaması"></textarea>
+                <label style="font-size: 13px; font-weight: bold;">Ürün Görseli (Otomatik WebP):</label>
+                <input type="file" id="p-file" accept="image/*">
+                <button id="submitBtn" onclick="handleProduct()" class="btn-primary">Ürünü Kaydet</button>
+                <button id="cancelBtn" onclick="resetForm()" class="btn-cancel hidden">Vazgeç</button>
+            </div>
+
+            <h3>Mevcut Ürünler</h3>
+            <div id="product-list" class="product-grid"></div>
+
+            <div class="admin-box" style="margin-top: 50px;">
+                <h3>📸 Galeri / Üretimden Kareler</h3>
+                <input type="file" id="g-file" accept="image/*">
+                <button id="gBtn" onclick="handleGallery()" class="btn-primary">Galeriye Ekle</button>
+                <div id="gallery-list" class="gallery-grid" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDa5PvNq8cIMPCxzjB_srweVgeMWottOE0",
+            authDomain: "baysanambalaj-9b434.firebaseapp.com",
+            projectId: "baysanambalaj-9b434",
+            storageBucket: "baysanambalaj-9b434.firebasestorage.app",
+            messagingSenderId: "974514964386",
+            appId: "1:974514964386:web:13a778c6476d2c75c794fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(), db = firebase.firestore(), storage = firebase.storage();
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('admin-section').classList.remove('hidden');
+                loadProducts(); loadGallery();
+            } else {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('admin-section').classList.add('hidden');
+            }
+        });
+
+        async function login() {
+            const e = document.getElementById('email').value, p = document.getElementById('password').value;
+            try { await auth.signInWithEmailAndPassword(e, p); } catch (err) { alert("Hata: " + err.message); }
+        }
+        function logout() { auth.signOut(); }
+
+        // WebP Dönüştürücü
+        function toWebP(file) {
+            return new Promise(res => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = e => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width; canvas.height = img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                        canvas.toBlob(blob => res(blob), 'image/webp', 0.8);
+                    };
+                };
+            });
+        }
+
+        // Ürün İşlemleri
+        async function handleProduct() {
+            const id = document.getElementById('edit-id').value, name = document.getElementById('p-name').value,
+                desc = document.getElementById('p-desc').value, file = document.getElementById('p-file').files[0],
+                btn = document.getElementById('submitBtn');
+            if (!name) return alert("İsim şart!");
+            btn.disabled = true; btn.innerText = "Yükleniyor...";
+            try {
+                let url = null, path = null;
+                if (file) {
+                    const oldPath = document.getElementById('old-path').value;
+                    if (oldPath) try { await storage.ref(oldPath).delete(); } catch (e) { }
+                    const webp = await toWebP(file);
+                    path = `urunler/${Date.now()}.webp`;
+                    const ref = storage.ref(path);
+                    await ref.put(webp);
+                    url = await ref.getDownloadURL();
+                }
+                const data = { isim: name, aciklama: desc };
+                if (url) { data.resimUrl = url; data.resimPath = path; }
+                if (id) { await db.collection("urunler").doc(id).update(data); }
+                else { data.tarih = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("urunler").add(data); }
+                resetForm(); loadProducts(); alert("Başarılı!");
+            } catch (e) { alert(e.message); }
+            btn.disabled = false; btn.innerText = "Ürünü Kaydet";
+        }
+
+        async function loadProducts() {
+            const snap = await db.collection("urunler").orderBy("tarih", "desc").get();
+            let html = "";
+            snap.forEach(doc => {
+                const p = doc.data();
+                html += `<div class="product-card">
+                    <img src="${p.resimUrl}">
+                    <div class="product-info"><h4>${p.isim}</h4><p>${p.aciklama || ""}</p></div>
+                    <div class="card-actions">
+                        <button class="action-btn" onclick="setEdit('${doc.id}','${p.isim}','${p.aciklama || ""}','${p.resimPath || ""}')">Düzenle</button>
+                        <button class="action-btn" style="color:red;" onclick="delProd('${doc.id}','${p.resimPath}')">Sil</button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('product-list').innerHTML = html;
+        }
+
+        function setEdit(id, name, desc, path) {
+            document.getElementById('edit-id').value = id; document.getElementById('p-name').value = name;
+            document.getElementById('p-desc').value = desc; document.getElementById('old-path').value = path;
+            document.getElementById('form-title').innerText = "Ürünü Düzenle";
+            document.getElementById('cancelBtn').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function resetForm() {
+            document.getElementById('edit-id').value = ""; document.getElementById('p-name').value = "";
+            document.getElementById('p-desc').value = ""; document.getElementById('p-file').value = "";
+            document.getElementById('form-title').innerText = "Yeni Ürün Ekle";
+            document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        async function delProd(id, path) {
+            if (confirm("Silinsin mi?")) {
+                if (path) try { await storage.ref(path).delete(); } catch (e) { }
+                await db.collection("urunler").doc(id).delete(); loadProducts();
+            }
+        }
+
+        // GALERİ İŞLEMLERİ - DÜZELTİLMİŞ VERSİYON
+        async function handleGallery() {
+            const fileInput = document.getElementById('g-file');
+            const file = fileInput.files[0];
+            const btn = document.getElementById('gBtn');
+
+            if (!file) return alert("Lütfen bir resim seçin!");
+
+            // Butonu kilitle
+            btn.disabled = true;
+            btn.innerText = "Yükleniyor ve WebP'ye Dönüştürülüyor...";
+
+            try {
+                // 1. Resmi WebP'ye çevir (Önceki toWebP fonksiyonunu kullanır)
+                const webpBlob = await toWebP(file);
+
+                // 2. Storage yolu oluştur
+                const path = `galeri/${Date.now()}.webp`;
+                const storageRef = storage.ref(path);
+
+                // 3. Storage'a yükle
+                await storageRef.put(webpBlob);
+                const url = await storageRef.getDownloadURL();
+
+                // 4. Firestore'a kaydet
+                await db.collection("galeri").add({
+                    resimUrl: url,
+                    resimPath: path, // Silme işlemi için bu referans şart
+                    tarih: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("Görsel başarıyla galeriye eklendi!");
+                fileInput.value = ""; // Dosya seçimini temizle
+                loadGallery(); // Listeyi yenile
+
+            } catch (error) {
+                console.error("Galeri yükleme hatası:", error);
+                alert("Yükleme sırasında bir hata oluştu: " + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Galeriye Ekle";
+            }
+        }
+
+        // Galeri Listeleme Fonksiyonunu da resimPath'e göre güncelle (Silme için önemli)
+        async function loadGallery() {
+            const galleryList = document.getElementById('gallery-list');
+            try {
+                const snap = await db.collection("galeri").orderBy("tarih", "desc").get();
+                let html = "";
+                snap.forEach(doc => {
+                    const g = doc.data();
+                    html += `
+                <div class="gallery-item">
+                    <img src="${g.resimUrl}">
+                    <div class="del-ov" onclick="delGal('${doc.id}','${g.resimPath || g.storagePath}')">X</div>
+                </div>`;
+                });
+                galleryList.innerHTML = html || "<p style='grid-column:1/-1; text-align:center;'>Galeri boş.</p>";
+            } catch (e) {
+                console.error("Galeri yüklenemedi:", e);
+            }
+        }
+    </script>
+</body>
+
+</html>

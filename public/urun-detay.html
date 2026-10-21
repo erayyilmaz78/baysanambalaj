@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürün Detayı | Baysan Ambalaj</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <style>
+        /* --- Premium Galeri Tasarımı --- */
+        .product-detail-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .product-gallery,
+        .product-info {
+            flex: 1 1 400px;
+            /* Mobilde alt alta, PC'de yan yana durmasını sağlar */
+        }
+
+        #detay-resim {
+            transition: opacity 0.3s ease-in-out;
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .gallery-thumbnails {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        /* Scrollbar'ı gizle ama kaydırılabilir kalsın */
+        .gallery-thumbnails::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .gallery-thumbnails::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .gallery-thumb {
+            width: 90px;
+            height: 90px;
+            flex-shrink: 0;
+            object-fit: cover;
+            border-radius: 16px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0.6;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .gallery-thumb:hover,
+        .gallery-thumb.active {
+            opacity: 1;
+            border-color: #1d4ed8;
+            /* Canlı Mavi Vurgusu */
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(29, 78, 216, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <header id="main-header" class="scrolled">
+        <nav style="max-width: 1400px;">
+            <div class="logo"><a href="index.html"><img src="logo.svg" alt="Baysan Logo"></a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Anasayfa</a></li>
+                <li><a href="index.html#hizmetlerimiz">Ürünler</a></li>
+                <li><a href="iletisim.html">İletişim</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container" style="padding: 150px 20px 80px 20px; min-height: 80vh; max-width: 1300px; margin: 0 auto;">
+        <div id="loading" style="text-align: center; font-size: 1.2rem; color: #666;">Yükleniyor...</div>
+
+        <div id="product-detail" class="hidden product-detail-layout" style="display: none;">
+
+            <div class="product-gallery">
+                <img id="detay-resim" src="" alt="Ürün Resmi">
+                <div id="thumbnail-container" class="gallery-thumbnails">
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h1 id="detay-baslik"
+                    style="font-size: 3.5rem; color: var(--koyu-mavi); margin-bottom: 20px; line-height: 1.1;"></h1>
+                <div id="detay-aciklama" style="font-size: 1.15rem; line-height: 1.8; color: #475569;"></div>
+                <hr style="margin: 40px 0; border: 0; border-top: 1px solid #e2e8f0;">
+                <a href="https://wa.me/905326107065" target="_blank" class="btn"
+                    style="display: inline-block; padding: 15px 40px; font-size: 1.1rem; border-radius: 12px;">Hemen
+                    Teklif Al</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDa5PvNq8cIMPCxzjB_srweVgeMWottOE0",
+            authDomain: "baysanambalaj-9b434.firebaseapp.com",
+            projectId: "baysanambalaj-9b434",
+            storageBucket: "baysanambalaj-9b434.firebasestorage.app",
+            messagingSenderId: "974514964386",
+            appId: "1:974514964386:web:13a778c6476d2c75c794fb",
+            measurementId: "G-J1KPC39EDQ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Ürün isimlerine göre gösterilecek alt galeri resimleri
+        const imageGalleries = {
+            "atlet": ["atlet-poset1.webp", "atlet-poset2.webp", "atlet-poset3.webp", "atlet-poset4.webp"],
+            "çanta": ["canta-poset1.webp", "canta-poset2.webp", "canta-poset3.webp", "canta-poset4.webp"],
+            "canta": ["canta-poset1.webp", "canta-poset2.webp", "canta-poset3.webp", "canta-poset4.webp"],
+            "dürüm": ["dürüm-poseti1.webp", "dürüm-poseti2.webp", "dürüm-poseti3.webp", "dürüm-poseti4.webp"],
+            "durum": ["dürüm-poseti1.webp", "dürüm-poseti2.webp", "dürüm-poseti3.webp", "dürüm-poseti4.webp"],
+            "naylon": ["naylon-torba1.webp", "naylon-torba2.webp", "naylon-torba3.webp"],
+            "vakum": ["vakum-torbasi1.webp", "vakum-torbasi2.webp"]
+        };
+
+        // Galeriyi Yükleme Fonksiyonu
+        function setupGallery(productName, mainImageUrl) {
+            const thumbContainer = document.getElementById('thumbnail-container');
+            const lowerName = productName.toLowerCase();
+            let selectedImages = [];
+
+            // Ürün adında anahtar kelimeyi ara ve uygun resimleri eşleştir
+            for (const [key, images] of Object.entries(imageGalleries)) {
+                if (lowerName.includes(key)) {
+                    selectedImages = images;
+                    break;
+                }
+            }
+
+            let thumbHTML = '';
+
+            // 1. Önce Firebase'den gelen ana resmi ilk thumbnail olarak ekle
+            if (mainImageUrl) {
+                thumbHTML += `<img src="${mainImageUrl}" class="gallery-thumb active" onclick="changeMainImage(this, '${mainImageUrl}')">`;
+            }
+
+            // 2. Sonra klasördeki diğer resimleri ekle
+            selectedImages.forEach(img => {
+                // Eğer eklenen resim veritabanındaki ana resimle aynı değilse ekle
+                if (!mainImageUrl || !mainImageUrl.includes(img)) {
+                    thumbHTML += `<img src="${img}" class="gallery-thumb" onclick="changeMainImage(this, '${img}')">`;
+                }
+            });
+
+            thumbContainer.innerHTML = thumbHTML;
+        }
+
+        // Ana Resmi Değiştirme ve Animasyon Fonksiyonu
+        window.changeMainImage = function (element, src) {
+            const mainImg = document.getElementById('detay-resim');
+
+            // Hafif kararma efekti
+            mainImg.style.opacity = 0.4;
+
+            setTimeout(() => {
+                mainImg.src = src;
+                mainImg.style.opacity = 1; // Yeni resim gelince aydınlanma
+            }, 200);
+
+            // Tüm thumb'lardan active sınıfını al, sadece tıklanana ekle
+            document.querySelectorAll('.gallery-thumb').forEach(thumb => thumb.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        async function loadProductDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) { window.location.href = 'index.html'; return; }
+
+            try {
+                const doc = await db.collection("urunler").doc(productId).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('detay-baslik').innerText = data.isim;
+                    document.getElementById('detay-aciklama').innerHTML = data.aciklama.replace(/\n/g, '<br>');
+
+                    const mainImg = document.getElementById('detay-resim');
+                    mainImg.src = data.resimUrl;
+                    document.title = `${data.isim} | Baysan Plastik Ambalaj`;
+
+                    // Galeriyi Hazırla
+                    setupGallery(data.isim, data.resimUrl);
+
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('product-detail').style.display = 'flex'; // Flex layout'u aktifleştir
+                }
+            } catch (error) {
+                console.error("Hata:", error);
+                document.getElementById('loading').innerText = "Ürün yüklenirken bir hata oluştu.";
+            }
+        }
+        loadProductDetail();
+    </script>
+</body>
+
+</html>
